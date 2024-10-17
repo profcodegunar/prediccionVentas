@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Predicción de Ventas</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <link rel="stylesheet" href="../static/style.css" />
+  </head>
+  <body>
+    <header class="cabecera">
+      <figure class="logo">
+        <img src="../static/img/logo.png" width="100px" alt="" />
+      </figure>
+      <nav class="menu">
+        <ul class="listas">
+          <li class="lista"><a href="#">Inicio</a></li>
+          <li class="lista"><a href="#">Nosotros</a></li>
+          <li class="lista"><a href="#">Productos</a></li>
+          <li class="lista"><a href="#">Contactos</a></li>
+        </ul>
+      </nav>
+      <div class="burger">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+      </div>
+    </header>
+    <script src="../static/script.js"></script>
+
+    <div class="container">
+      <h1>Predicción de Ventas por Año y Ciudad</h1>
+      <form id="predictionForm">
+        <label for="años">Año:</label>
+        <input type="number" id="años" required />
+
+        <label for="ciudades">Ciudad:</label>
+        <select id="ciudades" required>
+          <option value="Satipo">Satipo</option>
+          <option value="Rio Negro">Rio Negro</option>
+          <option value="Pichanaki">Pichanaki</option>
+          <option value="Santa Ana">Santa Ana</option>
+          <option value="La Merced">La Merced</option>
+        </select>
+
+        <button type="submit">Predecir Ventas</button>
+      </form>
+
+      <h2 id="result"></h2>
+    </div>
+
+    <script>
+      document
+        .getElementById("predictionForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const year = document.getElementById("años").value;
+          const city = document.getElementById("ciudades").value;
+
+          fetch("/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ años: parseInt(year), ciudades: city }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById(
+                "result"
+              ).innerText = `Predicción de Ventas: $${data.predicted_sales.toFixed(
+                2
+              )}`;
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              document.getElementById("result").innerText =
+                "Error en la predicción.";
+            });
+        });
+    </script>
+  </body>
+</html>
